@@ -1,143 +1,199 @@
+#!/usr/bin/env python3
+"""
+Chandan AIOps CLI - AI/ML Project Generator
+Version: 1.1.0
+"""
+
 import os
 import sys
 import shutil
-import click
+import argparse
 from pathlib import Path
+from typing import Optional, List
 
-def create_project(project_name):
-    """Create a new AIOps project structure"""
-    package_dir = Path(__file__).parent.parent
-    template_dir = package_dir / "templates" / "aiops_project"
+class AIOpsGenerator:
+    """Main AIOps project generator class"""
     
-    if not template_dir.exists():
-        print("Error: Template directory not found!")
-        return False
-    
-    project_path = Path.cwd() / project_name
-    
-    if project_path.exists():
-        print(f"Error: Directory '{project_name}' already exists!")
-        return False
-    
-    try:
-        shutil.copytree(template_dir, project_path)
+    def __init__(self, verbose: bool = False):
+        self.verbose = verbose
+        self.package_dir = Path(__file__).parent
+        self.template_dir = self.package_dir / "templates" / "aiops_project"
         
-        # Create .gitkeep files in empty directories
-        empty_dirs = [
-            'data/raw',
-            'data_insights',
-            'models',
-            'mlruns',
-            'logs',
-            'research'
+    def validate_template(self) -> bool:
+        """Validate that template files exist"""
+        if not self.template_dir.exists():
+            print(f"ERROR: Template directory not found: {self.template_dir}")
+            return False
+        
+        # Check for essential files
+        essential_files = [
+            'src/__init__.py',
+            'config.py',
+            'main.py',
+            'pyproject.toml',
+            'README.md'
         ]
         
-        for dir_path in empty_dirs:
-            full_path = project_path / dir_path
-            full_path.mkdir(parents=True, exist_ok=True)
-            gitkeep_file = full_path / ".gitkeep"
-            gitkeep_file.touch()
+        missing_files = []
+        for file in essential_files:
+            if not (self.template_dir / file).exists():
+                missing_files.append(file)
         
-        # Update project-specific files
-        update_project_files(project_path, project_name)
-        
-        display_structure(project_path)
-        print(f"Success: Created '{project_name}' successfully!")
+        if missing_files:
+            print(f"ERROR: Missing essential template files:")
+            for file in missing_files:
+                print(f"  - {file}")
+            return False
         
         return True
-        
-    except Exception as e:
-        print(f"Error: {e}")
-        return False
-
-def update_project_files(project_path, project_name):
-    """Update project-specific files with project name"""
-    # Update README.md
-    readme_path = project_path / "README.md"
-    if readme_path.exists():
-        content = readme_path.read_text()
-        content = content.replace("aiops_project", project_name)
-        content = content.replace("AIOps Project", project_name)
-        readme_path.write_text(content)
     
-    # Update config.py
-    config_path = project_path / "config.py"
-    if config_path.exists():
-        content = config_path.read_text()
-        content = content.replace("aiops_project", project_name)
-        config_path.write_text(content)
+    def create_project(self, project_name: str, output_dir: Optional[Path] = None) -> bool:
+        """Create a new AIOps project"""
+        
+        # Validate project name
+        if not self._validate_project_name(project_name):
+            return False
+        
+        # Set output directory
+        if output_dir:
+            project_path = output_dir / project_name
+        else:
+            project_path = Path.cwd() / project_name
+        
+        # Check if project already exists
+        if project_path.exists():
+            print(f"ERROR: Directory '{project_name}' already exists!")
+            return False
+        
+        # Validate template
+        if not self.validate_template():
+            print("Please check if template files are properly installed.")
+            return False
+        
+        try:
+            # Create project directory
+            project_path.mkdir(parents=True)
+            
+            if self.verbose:
+                print(f"Creating project: {project_name}")
+                print(f"Location: {project_path}")
+            
+            # Copy all template files and directories
+            self._copy_templates(project_path)
+            
+            # Display success message
+            self._display_success(project_path, project_name)
+            
+            return True
+            
+        except Exception as e:
+            print(f"ERROR: Failed to create project: {str(e)}")
+            # Cleanup on failure
+            if project_path.exists():
+                shutil.rmtree(project_path)
+            return False
     
-    # Update pyproject.toml
-    pyproject_path = project_path / "pyproject.toml"
-    if pyproject_path.exists():
-        content = pyproject_path.read_text()
-        content = content.replace("aiops-project", project_name.replace("_", "-"))
-        pyproject_path.write_text(content)
-
-def display_structure(project_path):
-    """Display the created project structure"""
-    print("\nProject Structure Created:")
-    print(f"{project_path.name}/")
+    def _validate_project_name(self, name: str) -> bool:
+        """Validate project name"""
+        if not name or not name.strip():
+            print("ERROR: Project name cannot be empty")
+            return False
+        
+        # Check for invalid characters
+        invalid_chars = ['<', '>', ':', '"', '|', '?', '*', '\\', '/']
+        for char in invalid_chars:
+            if char in name:
+                print(f"ERROR: Project name contains invalid character: '{char}'")
+                return False
+        
+        return True
     
-    def print_tree(path, prefix=""):
-        items = sorted([item for item in path.iterdir() 
-                       if not item.name.startswith('.') or item.name == '.github'])
-        
-        if not items:
-            return
-        
-        pointers = ["|--"] * (len(items) - 1) + ["`--"]
-        
-        for pointer, item in zip(pointers, items):
+    def _copy_templates(self, destination: Path):
+        """Copy template files to destination"""
+        for item in self.template_dir.iterdir():
+            dest_item = destination / item.name
+            
             if item.is_dir():
-                print(f"{prefix}{pointer} {item.name}/")
-                print_tree(item, prefix + ("    " if pointer == "`--" else "|   "))
+                shutil.copytree(item, dest_item)
+                if self.verbose:
+                    print(f"  Created directory: {item.name}/")
             else:
-                print(f"{prefix}{pointer} {item.name}")
+                shutil.copy2(item, dest_item)
+                if self.verbose:
+                    print(f"  Created file: {item.name}")
     
-    print_tree(project_path)
+    def _display_success(self, project_path: Path, project_name: str):
+        """Display success message and project structure"""
+        print(f"\nSUCCESS: Project '{project_name}' created successfully!")
+        print(f"Location: {project_path}")
+        
+        print("\nProject Structure:")
+        print(f"{project_name}/")
+        self._print_tree(project_path, prefix="  ")
+        
+        print("\nNext Steps:")
+        print(f"  1. cd {project_name}")
+        print(f"  2. python -m venv venv")
+        print(f"  3. For Windows: venv\\Scripts\\activate")
+        print(f"     For Mac/Linux: source venv/bin/activate")
+        print(f"  4. pip install -e .")
+        print(f"  5. Start adding your data to data/raw/")
+        print(f"  6. Edit files in src/ directory")
+    
+    def _print_tree(self, path: Path, prefix: str = ""):
+        """Print directory tree structure"""
+        items = sorted(path.iterdir())
+        
+        for i, item in enumerate(items):
+            connector = "└── " if i == len(items) - 1 else "├── "
+            
+            if item.is_dir():
+                print(f"{prefix}{connector}{item.name}/")
+                next_prefix = prefix + ("    " if i == len(items) - 1 else "│   ")
+                self._print_tree(item, next_prefix)
+            else:
+                print(f"{prefix}{connector}{item.name}")
 
-def validate_project(directory):
-    """Validate AIOps project structure"""
-    project_path = Path(directory)
+def validate_command():
+    """Validate existing project structure"""
+    parser = argparse.ArgumentParser(description="Validate AIOps project structure")
+    parser.add_argument("directory", nargs="?", default=".", help="Directory to validate")
+    args = parser.parse_args()
     
-    required_files = [
-        'src/data_ingestion.py',
-        'src/data_preprocessing.py',
-        'src/model_builder.py',
-        'config.py',
-        'main.py',
-        'pyproject.toml',
-        'README.md',
-        'Dockerfile',
-        'dvc.yaml'
-    ]
+    project_path = Path(args.directory)
     
     required_dirs = [
         'data/raw',
         'src',
         'app',
         'models',
-        'tests',
-        '.github/workflows'
+        'tests'
     ]
     
-    print("Validating AIOps project structure...")
+    required_files = [
+        'src/data_ingestion.py',
+        'src/model_builder.py',
+        'config.py',
+        'main.py',
+        'pyproject.toml'
+    ]
+    
+    print(f"Validating project structure: {project_path}")
     
     issues = []
     
     for dir_path in required_dirs:
         if (project_path / dir_path).exists():
-            print(f"  PASS: {dir_path}/")
+            print(f"  ✓ {dir_path}/")
         else:
-            print(f"  FAIL: {dir_path}/")
+            print(f"  ✗ {dir_path}/")
             issues.append(f"Missing directory: {dir_path}")
     
     for file_path in required_files:
         if (project_path / file_path).exists():
-            print(f"  PASS: {file_path}")
+            print(f"  ✓ {file_path}")
         else:
-            print(f"  FAIL: {file_path}")
+            print(f"  ✗ {file_path}")
             issues.append(f"Missing file: {file_path}")
     
     if issues:
@@ -149,43 +205,55 @@ def validate_project(directory):
         print("\nAll checks passed! Project structure is valid.")
         return True
 
-@click.group()
-def cli():
-    """Chandan AIOps - Create standardized AI/ML project structures"""
-    pass
-
-@cli.command()
-@click.argument('project_name')
-def create(project_name):
-    """Create a new AIOps project"""
-    success = create_project(project_name)
-    if success:
-        print("\nNext Steps:")
-        print(f"  cd {project_name}")
-        print("  python -m venv venv")
-        print("  # On Windows: venv\\Scripts\\activate")
-        print("  # On Mac/Linux: source venv/bin/activate")
-        print("  pip install -e .")
-        print("  python main.py")
-    else:
-        sys.exit(1)
-
-@cli.command()
-@click.argument('directory', default='.')
-def validate(directory):
-    """Validate an existing AIOps project structure"""
-    success = validate_project(directory)
-    if not success:
-        sys.exit(1)
-
-@cli.command()
-def version():
-    """Show package version"""
-    from chandan_aiops import __version__
-    print(f"chandan-aiops version {__version__}")
-
 def main():
-    cli()
+    """Main CLI entry point"""
+    parser = argparse.ArgumentParser(
+        description="Chandan AIOps - Create AI/ML project structures",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  aiops-create my-project          # Create new project
+  aiops-create my-project --verbose  # Create with verbose output
+  aiops-create validate            # Validate current directory
+  aiops-create validate ./project  # Validate specific directory
+        """
+    )
+    
+    subparsers = parser.add_subparsers(dest="command", help="Command to execute")
+    
+    # Create command
+    create_parser = subparsers.add_parser("create", help="Create a new project")
+    create_parser.add_argument("project_name", help="Name of the project to create")
+    create_parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
+    create_parser.add_argument("--output", "-o", help="Output directory (default: current directory)")
+    
+    # Validate command
+    validate_parser = subparsers.add_parser("validate", help="Validate project structure")
+    validate_parser.add_argument("directory", nargs="?", default=".", help="Directory to validate")
+    
+    # Version command
+    version_parser = subparsers.add_parser("version", help="Show package version")
+    
+    # Parse arguments
+    args = parser.parse_args()
+    
+    if not args.command:
+        parser.print_help()
+        return
+    
+    if args.command == "create":
+        output_dir = Path(args.output) if args.output else None
+        generator = AIOpsGenerator(verbose=args.verbose)
+        success = generator.create_project(args.project_name, output_dir)
+        sys.exit(0 if success else 1)
+    
+    elif args.command == "validate":
+        success = validate_command()
+        sys.exit(0 if success else 1)
+    
+    elif args.command == "version":
+        from chandan_aiops import __version__
+        print(f"chandan-aiops version {__version__}")
 
 if __name__ == "__main__":
     main()

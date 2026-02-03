@@ -1,8 +1,7 @@
 Metadata-Version: 2.4
 Name: chandan-aiops
-Version: 0.1.0
+Version: 1.1.0
 Summary: Add your description here
-Home-page: https://github.com/yourusername/chandan_aiops
 Author: Chandan
 Author-email: your.email@example.com
 Requires-Python: >=3.7
@@ -14,8 +13,9 @@ Requires-Dist: twine>=6.2.0
 Requires-Dist: wheel>=0.46.3
 Dynamic: author
 Dynamic: author-email
-Dynamic: home-page
 Dynamic: license-file
 Dynamic: requires-python
 
-# chandan_aiops
+# Chandan AIOps 
+ 
+Generate AI/ML project structures with one command. 
