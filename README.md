@@ -18,6 +18,8 @@ A Python package to instantly generate a standardized, production-ready MLOps/AI
 
 PyPI Project Page: https://pypi.org/project/chandan-aiops/
 
+pip package : pip install chandan-aiops==0.1.0
+
 ---
 
 ```
