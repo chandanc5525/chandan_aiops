@@ -59,11 +59,11 @@ Note:
 
 ## **Validate Project Structure:**
 
-# Validate current directory
+- Validate current directory
 
 python -m chandan_aiops.cli validate
 
-# Validate specific project
+- Validate specific project
 
 python -m chandan_aiops.cli validate ./my-project
 
