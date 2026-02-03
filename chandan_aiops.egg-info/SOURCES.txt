@@ -1,0 +1,11 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+chandan_aiops/__init__.py
+chandan_aiops/cli.py
+chandan_aiops.egg-info/PKG-INFO
+chandan_aiops.egg-info/SOURCES.txt
+chandan_aiops.egg-info/dependency_links.txt
+chandan_aiops.egg-info/requires.txt
+chandan_aiops.egg-info/top_level.txt
