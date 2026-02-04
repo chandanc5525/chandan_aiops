@@ -26,6 +26,7 @@ chandan_aiops/templates/aiops_project/app/static/style.css
 chandan_aiops/templates/aiops_project/app/templates/index.html
 chandan_aiops/templates/aiops_project/data/raw/.gitkeep
 chandan_aiops/templates/aiops_project/data_insights/.gitkeep
+chandan_aiops/templates/aiops_project/data_insights/report.txt
 chandan_aiops/templates/aiops_project/logs/.gitkeep
 chandan_aiops/templates/aiops_project/mlruns/.gitkeep
 chandan_aiops/templates/aiops_project/models/.gitkeep

@@ -1,7 +1,30 @@
-## Chandan-AIOps 🚀
+## chandan-aiops
 
-One-Command AI/ML Project Structure Generator
-Create complete, production-ready AI/ML project structures instantly. Perfect for data scientists and ML engineers who want to follow best practices from day one.
+Chandan-AIOps is a Python command-line tool that generates production-ready AI/ML project structures using industry-standard MLOps practices.
+
+It enables data scientists and ML engineers to bootstrap scalable, reproducible machine learning projects with a single command—eliminating repetitive setup work and enforcing best practices from day one.
+
+---
+
+## Key Capabilities
+
+1. One-command generation of complete AI/ML project scaffolding
+
+2. Opinionated yet extensible project layout aligned with real-world MLOps workflows
+
+- Built-in support for:
+
+1. MLflow experiment tracking
+
+2. DVC-based data and model versioning
+
+3. FastAPI inference services
+
+4. CI/CD via GitHub Actions
+
+5. Project structure validation utilities
+
+6. Designed for local development, experimentation, and production deployment
 
 ---
 
@@ -9,7 +32,7 @@ Create complete, production-ready AI/ML project structures instantly. Perfect fo
 Installation Guide:
 
 Step1: pip install chandan-aiops
-Step2: python -m chandan_aiops.cli <ProjectTitle>
+Step2: python -m chandan_aiops.cli create <ProjectTitle>
        # Windows Command Prompt:
          doskey aiops-create=python -m chandan_aiops.cli $*
        # Windows PowerShell:
@@ -75,8 +98,14 @@ python -m chandan_aiops.cli version
 
 ## **Package and Source Code:**
 
-- PyPI Package: https://pypi.org/project/chandan-aiops/
+- PyPI Package: https://pypi.org/project/chandan-aiops/1.4.0/
 
 - Source Code: https://github.com/chandanc5525/chandan_aiops
+
+---
+
+License
+
+MIT License
 
 ---

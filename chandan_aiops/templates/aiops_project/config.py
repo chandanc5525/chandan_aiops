@@ -4,7 +4,7 @@ Configuration for AIOps Project
 
 class Config:
     PROJECT_NAME = "aiops_project"
-    VERSION = "1.0.0"
+    VERSION = "1.0.0"  # Update your version here
     
     # Paths
     DATA_RAW_PATH = "data/raw"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Chandan AIOps CLI - AI/ML Project Generator
-Version: 1.1.0
+Version: 1.3.0
 """
 
 import os
