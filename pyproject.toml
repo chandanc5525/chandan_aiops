@@ -1,13 +1,46 @@
 [project]
 name = "chandan-aiops"
-version = "1.4.0"
-description = "Add your description here"
-#chandan = "chandan_aiops.cli:main"
+version = "1.5.0"
+description = "Accelerate your machine learning lifecycle with chandan-aiops. This powerful CLI generator creates enterprise-ready AI project blueprints with a DVC-first architecture for robust data versioning. Get instant access to standardized templates for CI/CD, containerization, logging, and monitoring, ensuring reproducibility, collaboration, and faster time-to-production from day one."
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "build>=1.4.0",
-    "setuptools>=80.10.2",
-    "twine>=6.2.0",
-    "wheel>=0.46.3",
+license = { text = "MIT" }
+authors = [
+    { name = "Chandan Chaudhari" }
 ]
+requires-python = ">=3.9"
+
+keywords = [
+    "mlops",
+    "aiops",
+    "machine-learning",
+    "dvc",
+    "mlflow",
+    "pipeline",
+    "project-template"
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Build Tools",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
+]
+
+dependencies = [
+    "typer>=0.12.3",
+    "rich>=13.7.0"
+]
+
+[project.scripts]
+chandan-aiops = "chandan_aiops.cli:app"
+
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"

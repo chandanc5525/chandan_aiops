@@ -1,259 +1,233 @@
-#!/usr/bin/env python3
-"""
-Chandan AIOps CLI - AI/ML Project Generator
-Version: 1.3.0
-"""
-
-import os
 import sys
 import shutil
 import argparse
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional
 
-class AIOpsGenerator:
-    """Main AIOps project generator class"""
-    
+
+class AIOpsProjectGenerator:
+    """
+    Project Structure Design: 
+
+    Responsibility:
+    - Create project structure from templates
+    - Guide users on next steps
+    - Keep pipeline logic declarative (DVC-first)
+    """
+
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
-        self.package_dir = Path(__file__).parent
-        self.template_dir = self.package_dir / "templates" / "aiops_project"
-        
-    def validate_template(self) -> bool:
-        """Validate that template files exist"""
-        if not self.template_dir.exists():
-            print(f"ERROR: Template directory not found: {self.template_dir}")
-            return False
-        
-        # Check for essential files
-        essential_files = [
-            'src/__init__.py',
-            'config.py',
-            'main.py',
-            'pyproject.toml',
-            'README.md'
-        ]
-        
-        missing_files = []
-        for file in essential_files:
-            if not (self.template_dir / file).exists():
-                missing_files.append(file)
-        
-        if missing_files:
-            print(f"ERROR: Missing essential template files:")
-            for file in missing_files:
-                print(f"  - {file}")
-            return False
-        
-        return True
-    
-    def create_project(self, project_name: str, output_dir: Optional[Path] = None) -> bool:
-        """Create a new AIOps project"""
-        
-        # Validate project name
-        if not self._validate_project_name(project_name):
-            return False
-        
-        # Set output directory
-        if output_dir:
-            project_path = output_dir / project_name
-        else:
-            project_path = Path.cwd() / project_name
-        
-        # Check if project already exists
+        self.package_root = Path(__file__).parent
+        self.template_root = self.package_root / "templates" / "aiops_project"
+
+    def create(self, project_name: str, output_dir: Optional[Path] = None) -> None:
+        self._validate_project_name(project_name)
+        self._validate_templates()
+
+        target_base = output_dir if output_dir else Path.cwd()
+        project_path = target_base / project_name
+
         if project_path.exists():
-            print(f"ERROR: Directory '{project_name}' already exists!")
-            return False
-        
-        # Validate template
-        if not self.validate_template():
-            print("Please check if template files are properly installed.")
-            return False
-        
-        try:
-            # Create project directory
-            project_path.mkdir(parents=True)
-            
-            if self.verbose:
-                print(f"Creating project: {project_name}")
-                print(f"Location: {project_path}")
-            
-            # Copy all template files and directories
-            self._copy_templates(project_path)
-            
-            # Display success message
-            self._display_success(project_path, project_name)
-            
-            return True
-            
-        except Exception as e:
-            print(f"ERROR: Failed to create project: {str(e)}")
-            # Cleanup on failure
-            if project_path.exists():
-                shutil.rmtree(project_path)
-            return False
-    
-    def _validate_project_name(self, name: str) -> bool:
-        """Validate project name"""
+            raise FileExistsError(f"Directory already exists: {project_path}")
+
+        project_path.mkdir(parents=True)
+        self._copy_templates(project_path)
+        self._print_success_guide(project_name, project_path)
+
+    def _validate_project_name(self, name: str) -> None:
         if not name or not name.strip():
-            print("ERROR: Project name cannot be empty")
-            return False
-        
-        # Check for invalid characters
+            raise ValueError("Project name cannot be empty")
+
         invalid_chars = ['<', '>', ':', '"', '|', '?', '*', '\\', '/']
         for char in invalid_chars:
             if char in name:
-                print(f"ERROR: Project name contains invalid character: '{char}'")
-                return False
-        
-        return True
-    
-    def _copy_templates(self, destination: Path):
-        """Copy template files to destination"""
-        for item in self.template_dir.iterdir():
-            dest_item = destination / item.name
-            
-            if item.is_dir():
-                shutil.copytree(item, dest_item)
-                if self.verbose:
-                    print(f"  Created directory: {item.name}/")
-            else:
-                shutil.copy2(item, dest_item)
-                if self.verbose:
-                    print(f"  Created file: {item.name}")
-    
-    def _display_success(self, project_path: Path, project_name: str):
-        """Display success message and project structure"""
-        print(f"\nSUCCESS: Project '{project_name}' created successfully!")
-        print(f"Location: {project_path}")
-        
-        print("\nProject Structure:")
-        print(f"{project_name}/")
-        self._print_tree(project_path, prefix="  ")
-        
-        print("\nNext Steps:")
-        print(f"  1. cd {project_name}")
-        print(f"  2. python -m venv venv")
-        print(f"  3. For Windows: venv\\Scripts\\activate")
-        print(f"     For Mac/Linux: source venv/bin/activate")
-        print(f"  4. pip install -e .")
-        print(f"  5. Start adding your data to data/raw/")
-        print(f"  6. Edit files in src/ directory")
-    
-    def _print_tree(self, path: Path, prefix: str = ""):
-        """Print directory tree structure"""
-        items = sorted(path.iterdir())
-        
-        for i, item in enumerate(items):
-            connector = "└── " if i == len(items) - 1 else "├── "
-            
-            if item.is_dir():
-                print(f"{prefix}{connector}{item.name}/")
-                next_prefix = prefix + ("    " if i == len(items) - 1 else "│   ")
-                self._print_tree(item, next_prefix)
-            else:
-                print(f"{prefix}{connector}{item.name}")
+                raise ValueError(f"Invalid character in project name: {char}")
 
-def validate_command():
-    """Validate existing project structure"""
-    parser = argparse.ArgumentParser(description="Validate AIOps project structure")
-    parser.add_argument("directory", nargs="?", default=".", help="Directory to validate")
-    args = parser.parse_args()
-    
-    project_path = Path(args.directory)
-    
+    def _validate_templates(self) -> None:
+        if not self.template_root.exists():
+            raise FileNotFoundError(
+                f"Template directory not found: {self.template_root}"
+            )
+
+        required = [
+            "dvc.yaml",
+            "params.yaml",
+            "src",
+            "data",
+            "README.md",
+            "pyproject.toml"
+        ]
+
+        missing = [
+            item for item in required
+            if not (self.template_root / item).exists()
+        ]
+
+        if missing:
+            raise FileNotFoundError(
+                f"Missing required template files: {', '.join(missing)}"
+            )
+
+    def _copy_templates(self, destination: Path) -> None:
+        for item in self.template_root.iterdir():
+            dest = destination / item.name
+            if item.is_dir():
+                shutil.copytree(item, dest)
+                if self.verbose:
+                    print(f"Created directory: {item.name}")
+            else:
+                shutil.copy2(item, dest)
+                if self.verbose:
+                    print(f"Created file: {item.name}")
+
+    def _print_success_guide(self, project_name: str, project_path: Path) -> None:
+        print("\nProject created successfully")
+        print("-" * 60)
+        print(f"Project Name : {project_name}")
+        print(f"Location     : {project_path.resolve()}")
+
+        print("\nNext steps to get started")
+        print("-" * 60)
+        print(f"1. Navigate to your project")
+        print(f"   cd {project_name}")
+
+        print("\n2. Create and activate virtual environment")
+        print("   python -m venv venv")
+        print("   Windows : venv\\Scripts\\activate")
+        print("   macOS/Linux : source venv/bin/activate")
+
+        print("\n3. Install project in editable mode")
+        print("   pip install -e .")
+
+        print("\n4. Initialize DVC (only once)")
+        print("   dvc init")
+
+        print("\n5. Review DVC pipeline definition")
+        print("   dvc.yaml        -> pipeline stages (single source of truth)")
+        print("   params.yaml     -> pipeline parameters")
+
+        print("\n6. Run the pipeline")
+        print("   dvc repro")
+
+        print("\n7. Visualize pipeline DAG")
+        print("   dvc dag")
+
+        print("\nImportant notes")
+        print("-" * 60)
+        print("- Modify pipeline logic only in dvc.yaml")
+        print("- Source code lives inside src/")
+        print("- Raw data goes into data/raw/")
+        print("- Generated models and metrics are tracked by DVC")
+
+        print("\nYou are now ready to build reproducible ML pipelines using chandan-aiops.")
+
+
+def validate_project(directory: Path) -> None:
     required_dirs = [
-        'data/raw',
-        'src',
-        'app',
-        'models',
-        'tests'
+        "data/raw",
+        "src",
+        "models",
+        "tests"
     ]
-    
-    required_files = [
-        'src/data_ingestion.py',
-        'src/model_builder.py',
-        'config.py',
-        'main.py',
-        'pyproject.toml'
-    ]
-    
-    print(f"Validating project structure: {project_path}")
-    
-    issues = []
-    
-    for dir_path in required_dirs:
-        if (project_path / dir_path).exists():
-            print(f"  ✓ {dir_path}/")
-        else:
-            print(f"  ✗ {dir_path}/")
-            issues.append(f"Missing directory: {dir_path}")
-    
-    for file_path in required_files:
-        if (project_path / file_path).exists():
-            print(f"  ✓ {file_path}")
-        else:
-            print(f"  ✗ {file_path}")
-            issues.append(f"Missing file: {file_path}")
-    
-    if issues:
-        print(f"\nFound {len(issues)} issues:")
-        for issue in issues:
-            print(f"  - {issue}")
-        return False
-    else:
-        print("\nAll checks passed! Project structure is valid.")
-        return True
 
-def main():
-    """Main CLI entry point"""
+    required_files = [
+        "dvc.yaml",
+        "params.yaml",
+        "pyproject.toml"
+    ]
+
+    print(f"\nValidating project at: {directory.resolve()}")
+    print("-" * 60)
+
+    errors = False
+
+    for d in required_dirs:
+        if (directory / d).exists():
+            print(f"OK   directory : {d}")
+        else:
+            print(f"FAIL directory : {d}")
+            errors = True
+
+    for f in required_files:
+        if (directory / f).exists():
+            print(f"OK   file      : {f}")
+        else:
+            print(f"FAIL file      : {f}")
+            errors = True
+
+    if errors:
+        sys.exit(1)
+
+    print("\nProject structure is valid")
+
+
+def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Chandan AIOps - Create AI/ML project structures",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+        prog="chandan-aiops",
+        description=(
+            "chandan-aiops is a DVC-first project generator for building "
+            "reproducible, production-ready ML pipelines."
+        ),
+        formatter_class=argparse.RawTextHelpFormatter,
         epilog="""
-Examples:
-  aiops-create my-project          # Create new project
-  aiops-create my-project --verbose  # Create with verbose output
-  aiops-create validate            # Validate current directory
-  aiops-create validate ./project  # Validate specific directory
-        """
+Common usage:
+
+  chandan-aiops create my_project
+  chandan-aiops create my_project --verbose
+  chandan-aiops validate
+  chandan-aiops validate path/to/project
+
+After creation:
+  cd my_project
+  dvc repro
+  dvc dag
+"""
     )
-    
-    subparsers = parser.add_subparsers(dest="command", help="Command to execute")
-    
-    # Create command
-    create_parser = subparsers.add_parser("create", help="Create a new project")
-    create_parser.add_argument("project_name", help="Name of the project to create")
-    create_parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
-    create_parser.add_argument("--output", "-o", help="Output directory (default: current directory)")
-    
-    # Validate command
-    validate_parser = subparsers.add_parser("validate", help="Validate project structure")
-    validate_parser.add_argument("directory", nargs="?", default=".", help="Directory to validate")
-    
-    # Version command
-    version_parser = subparsers.add_parser("version", help="Show package version")
-    
-    # Parse arguments
+
+    subparsers = parser.add_subparsers(dest="command")
+
+    create_cmd = subparsers.add_parser(
+        "create",
+        help="Create a new AI/ML project"
+    )
+    create_cmd.add_argument("name", help="Project name")
+    create_cmd.add_argument(
+        "--output",
+        help="Output directory (default: current directory)"
+    )
+    create_cmd.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable verbose output"
+    )
+
+    validate_cmd = subparsers.add_parser(
+        "validate",
+        help="Validate an existing project structure"
+    )
+    validate_cmd.add_argument(
+        "directory",
+        nargs="?",
+        default=".",
+        help="Project directory"
+    )
+
     args = parser.parse_args()
-    
+
     if not args.command:
         parser.print_help()
-        return
-    
+        sys.exit(0)
+
     if args.command == "create":
-        output_dir = Path(args.output) if args.output else None
-        generator = AIOpsGenerator(verbose=args.verbose)
-        success = generator.create_project(args.project_name, output_dir)
-        sys.exit(0 if success else 1)
-    
+        generator = AIOpsProjectGenerator(verbose=args.verbose)
+        generator.create(
+            project_name=args.name,
+            output_dir=Path(args.output) if args.output else None
+        )
+
     elif args.command == "validate":
-        success = validate_command()
-        sys.exit(0 if success else 1)
-    
-    elif args.command == "version":
-        from chandan_aiops import __version__
-        print(f"chandan-aiops version {__version__}")
+        validate_project(Path(args.directory))
+
 
 if __name__ == "__main__":
     main()

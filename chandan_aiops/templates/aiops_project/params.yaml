@@ -1,0 +1,49 @@
+project:
+  name: my-ai-project
+  environment: dev
+  random_state: 42
+
+data:
+  raw_path: data/raw/data.csv
+  processed_path: data/processed/processed_data.csv
+  target_column: target
+
+features:
+  drop_columns:
+    - id
+  categorical_encoding: onehot
+  scaling: standard
+
+split:
+  test_size: 0.2
+  shuffle: true
+
+model:
+  name: random_forest
+  params:
+    n_estimators: 100
+    max_depth: 10
+    min_samples_split: 2
+
+training:
+  cross_validation: false
+  cv_folds: 5
+
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+
+prediction:
+  input_path: data/raw/inference.csv
+  output_path: data/processed/predictions.csv
+
+mlflow:
+  tracking_uri: mlruns
+  experiment_name: default
+
+logging:
+  level: INFO
+  log_dir: logs
