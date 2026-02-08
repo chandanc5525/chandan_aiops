@@ -225,6 +225,6 @@ Author
 
 Chandan Chaudhari
 
-PyPI Package: https://pypi.org/project/chandan-aiops/1.5.0/
+PyPI Package: https://pypi.org/project/chandan-aiops/
 
 Source Code: https://github.com/chandanc5525/chandan_aiops

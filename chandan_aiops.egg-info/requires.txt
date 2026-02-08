@@ -1,4 +1,2 @@
-build>=1.4.0
-setuptools>=80.10.2
-twine>=6.2.0
-wheel>=0.46.3
+typer>=0.12.3
+rich>=13.7.0

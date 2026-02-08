@@ -1,0 +1,2 @@
+[console_scripts]
+chandan-aiops = chandan_aiops.cli:app

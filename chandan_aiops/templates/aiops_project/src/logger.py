@@ -1,19 +1,24 @@
 import logging
-import os
-from datetime import datetime
+from pathlib import Path
+import yaml
 
-LOG_DIR = "logs"
-os.makedirs(LOG_DIR, exist_ok=True)
+def setup_logger(log_dir: str = "logs", level: str = "INFO"):
+    Path(log_dir).mkdir(exist_ok=True, parents=True)
+    logger = logging.getLogger("AIOps")
+    logger.setLevel(level)
+    fh = logging.FileHandler(Path(log_dir) / "pipeline.log")
+    ch = logging.StreamHandler()
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    return logger
 
-LOG_FILE = os.path.join(
-    LOG_DIR, f"pipeline_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
-)
-
-logging.basicConfig(
-    filename=LOG_FILE,
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-    level=logging.INFO
-)
-
-def get_logger(name: str):
-    return logging.getLogger(name)
+def load_params(path: str = "params.yaml"):
+    import yaml
+    with open(path, "r") as f:
+        params = yaml.safe_load(f)
+    return params

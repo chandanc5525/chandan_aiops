@@ -2,12 +2,12 @@ LICENSE
 MANIFEST.in
 README.md
 pyproject.toml
-setup.py
 chandan_aiops/__init__.py
 chandan_aiops/cli.py
 chandan_aiops.egg-info/PKG-INFO
 chandan_aiops.egg-info/SOURCES.txt
 chandan_aiops.egg-info/dependency_links.txt
+chandan_aiops.egg-info/entry_points.txt
 chandan_aiops.egg-info/requires.txt
 chandan_aiops.egg-info/top_level.txt
 chandan_aiops/templates/aiops_project/.dvcignore
@@ -16,6 +16,7 @@ chandan_aiops/templates/aiops_project/README.md
 chandan_aiops/templates/aiops_project/config.py
 chandan_aiops/templates/aiops_project/dvc.yaml
 chandan_aiops/templates/aiops_project/main.py
+chandan_aiops/templates/aiops_project/params.yaml
 chandan_aiops/templates/aiops_project/pyproject.toml
 chandan_aiops/templates/aiops_project/.github/workflows/ci.yml
 chandan_aiops/templates/aiops_project/app/__init__.py
@@ -31,6 +32,8 @@ chandan_aiops/templates/aiops_project/logs/.gitkeep
 chandan_aiops/templates/aiops_project/mlruns/.gitkeep
 chandan_aiops/templates/aiops_project/models/.gitkeep
 chandan_aiops/templates/aiops_project/research/.gitkeep
+chandan_aiops/templates/aiops_project/research/ANN_model.ipynb
+chandan_aiops/templates/aiops_project/research/model.ipynb
 chandan_aiops/templates/aiops_project/src/__init__.py
 chandan_aiops/templates/aiops_project/src/data_ingestion.py
 chandan_aiops/templates/aiops_project/src/data_preprocessing.py
@@ -38,4 +41,5 @@ chandan_aiops/templates/aiops_project/src/logger.py
 chandan_aiops/templates/aiops_project/src/model_builder.py
 chandan_aiops/templates/aiops_project/src/model_evaluator.py
 chandan_aiops/templates/aiops_project/src/model_predictor.py
+chandan_aiops/templates/aiops_project/src/visualize.py
 chandan_aiops/templates/aiops_project/tests/test_pipeline.py

@@ -1,15 +1,17 @@
 import pandas as pd
-from src.logger import get_logger
-from config import Config
+from pathlib import Path
+from logger import setup_logger, load_params
 
-logger = get_logger(__name__)
+logger = setup_logger()
+params = load_params()
 
-def ingest_data():
-    logger.info("Data ingestion started")
+raw_path = Path(params["data"]["raw_path"])
+processed_path = Path(params["data"]["processed_path"])
+processed_path.parent.mkdir(parents=True, exist_ok=True)
 
-    df = pd.read_csv(Config.RAW_DATA_PATH)
+logger.info(f"Reading raw data from {raw_path}")
+df = pd.read_csv(raw_path)
 
-    logger.info(f"Data loaded with shape {df.shape}")
-    logger.info("Data ingestion completed")
-
-    return df
+logger.info(f"Writing processed data to {processed_path}")
+df.to_csv(processed_path, index=False)
+logger.info("Data ingestion completed successfully.")
