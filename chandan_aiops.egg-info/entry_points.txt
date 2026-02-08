@@ -1,2 +1,3 @@
 [console_scripts]
+aiops-create = chandan_aiops.cli:app
 chandan-aiops = chandan_aiops.cli:app

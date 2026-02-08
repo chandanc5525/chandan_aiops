@@ -10,6 +10,7 @@ chandan_aiops.egg-info/dependency_links.txt
 chandan_aiops.egg-info/entry_points.txt
 chandan_aiops.egg-info/requires.txt
 chandan_aiops.egg-info/top_level.txt
+chandan_aiops/templates/visualize.py
 chandan_aiops/templates/aiops_project/.dvcignore
 chandan_aiops/templates/aiops_project/Dockerfile
 chandan_aiops/templates/aiops_project/README.md
@@ -41,5 +42,4 @@ chandan_aiops/templates/aiops_project/src/logger.py
 chandan_aiops/templates/aiops_project/src/model_builder.py
 chandan_aiops/templates/aiops_project/src/model_evaluator.py
 chandan_aiops/templates/aiops_project/src/model_predictor.py
-chandan_aiops/templates/aiops_project/src/visualize.py
 chandan_aiops/templates/aiops_project/tests/test_pipeline.py

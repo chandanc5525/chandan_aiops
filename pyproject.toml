@@ -1,45 +1,40 @@
 [project]
 name = "chandan-aiops"
-version = "1.5.0"
-description = "Accelerate your machine learning lifecycle with chandan-aiops. This powerful CLI generator creates enterprise-ready AI project blueprints with a DVC-first architecture for robust data versioning. Get instant access to standardized templates for CI/CD, containerization, logging, and monitoring, ensuring reproducibility, collaboration, and faster time-to-production from day one."
+version = "1.5.3"
+description = "Enterprise-ready MLOps project generator with DVC-first pipelines"
 readme = "README.md"
 license = { text = "MIT" }
-authors = [
-    { name = "Chandan Chaudhari" }
-]
+authors = [{ name = "Chandan Chaudhari" }]
 requires-python = ">=3.9"
 
 keywords = [
-    "mlops",
-    "aiops",
-    "machine-learning",
-    "dvc",
-    "mlflow",
-    "pipeline",
-    "project-template"
+  "mlops",
+  "aiops",
+  "dvc",
+  "machine-learning",
+  "pipeline",
+  "project-template"
 ]
 
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Education",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Software Development :: Build Tools",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12"
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12"
 ]
 
 dependencies = [
-    "typer>=0.12.3",
-    "rich>=13.7.0"
+  "rich>=13.7.0"
 ]
 
 [project.scripts]
 chandan-aiops = "chandan_aiops.cli:app"
+aiops-create = "chandan_aiops.cli:app"
 
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]

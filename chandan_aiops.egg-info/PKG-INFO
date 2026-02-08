@@ -1,15 +1,13 @@
 Metadata-Version: 2.4
 Name: chandan-aiops
-Version: 1.5.0
-Summary: Accelerate your machine learning lifecycle with chandan-aiops. This powerful CLI generator creates enterprise-ready AI project blueprints with a DVC-first architecture for robust data versioning. Get instant access to standardized templates for CI/CD, containerization, logging, and monitoring, ensuring reproducibility, collaboration, and faster time-to-production from day one.
+Version: 1.5.3
+Summary: Enterprise-ready MLOps project generator with DVC-first pipelines
 Author: Chandan Chaudhari
 License: MIT
-Keywords: mlops,aiops,machine-learning,dvc,mlflow,pipeline,project-template
+Keywords: mlops,aiops,dvc,machine-learning,pipeline,project-template
 Classifier: Development Status :: 4 - Beta
 Classifier: Intended Audience :: Developers
-Classifier: Intended Audience :: Education
 Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
-Classifier: Topic :: Software Development :: Build Tools
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3.9
@@ -19,7 +17,6 @@ Classifier: Programming Language :: Python :: 3.12
 Requires-Python: >=3.9
 Description-Content-Type: text/markdown
 License-File: LICENSE
-Requires-Dist: typer>=0.12.3
 Requires-Dist: rich>=13.7.0
 Dynamic: license-file
 
@@ -250,6 +247,6 @@ Author
 
 Chandan Chaudhari
 
-PyPI Package: https://pypi.org/project/chandan-aiops/1.5.0/
+PyPI Package: https://pypi.org/project/chandan-aiops/
 
 Source Code: https://github.com/chandanc5525/chandan_aiops
